@@ -46,14 +46,30 @@
       for(let i=0; i<questions.length; i++) {
         let q = questions[i].q;
         let answers = questions[i].options;
-        let correct = parseInt(data.get(`q${i}`));
-        quiz.push({question:q,answers:answers,correct:correct});
+        let correct = data.get(`q${i}`);
+        if (correct === null) {
+          alert('Merci de répondre à toutes les questions !');
+          return;
+        }
+        quiz.push({question:q,answers:answers,correct:parseInt(correct)});
       }
       const creator = data.get('creator') || '';
       const payload = {creator, quiz};
-      const encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
-      const url = `${window.location.origin}${window.location.pathname.replace('create.html','index.html')}?quiz=${encoded}`;
-      document.getElementById('quiz-link').innerHTML = `<b>Partage ce lien :</b><br><input style='width:100%' value='${url}' readonly onclick='this.select()'>`;
+      let encoded = '';
+      try {
+        encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
+      } catch (err) {
+        alert('Erreur lors de la génération du lien.');
+        return;
+      }
+      let base = window.location.origin;
+      if (base === 'null' || base === 'file://') base = '';
+      const url = `${base}${window.location.pathname.replace('create.html','index.html')}?quiz=${encoded}`;
+      document.getElementById('quiz-link').innerHTML = `<b>Partage ce lien :</b><br><input id='share-link' style='width:100%' value='${url}' readonly onclick='this.select()'>`;
+      setTimeout(()=>{
+        const input = document.getElementById('share-link');
+        if(input) input.onclick = function(){ this.select(); document.execCommand('copy'); };
+      }, 100);
     }
   </script>
 </body>
