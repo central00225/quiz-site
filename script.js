@@ -95,6 +95,50 @@ if (userQuiz) {
   return;
 }
 
+const quizFromFriend = getQuizFromURL();
+if (quizFromFriend) {
+  let current = 0;
+  let score = 0;
+  quizEl.innerHTML = `<div style='margin-bottom:12px;color:#2d3a4b;font-weight:bold;'>Trouve les bonnes réponses de ${creator ? creator : 'ton ami'} !</div>`;
+  showFriendQuizQuestion();
+  function showFriendQuizQuestion() {
+    resultEl.textContent = '';
+    nextBtn.style.display = 'none';
+    let q = quizFromFriend[current];
+    quizEl.innerHTML = `<div class='card'><b>Question ${current+1} :</b><br>${q.question}</div>`;
+    q.answers.forEach((ans, i) => {
+      quizEl.innerHTML += `<button class='btn' style='margin-bottom:8px;' onclick='window.selectFriendAnswer(${i})'>${ans}</button>`;
+    });
+  }
+  window.selectFriendAnswer = function(index) {
+    let q = quizFromFriend[current];
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === q.correct) btn.style.background = '#4caf50';
+      if (i === index && i !== q.correct) btn.style.background = '#e57373';
+    });
+    if (index === q.correct) score++;
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = current < quizFromFriend.length-1 ? 'Suivant' : 'Voir le score';
+    nextBtn.onclick = function() {
+      current++;
+      if(current < quizFromFriend.length) {
+        showFriendQuizQuestion();
+      } else {
+        quizEl.innerHTML = '';
+        nextBtn.style.display = 'none';
+        resultEl.innerHTML = `Tu as obtenu ${score} / ${quizFromFriend.length} !<br><br><a href='create.html' class='btn' style='margin-top:18px;'>Crée ton propre quiz</a>`;
+      }
+    }
+  }
+  // Empêche l'ancien quiz de s'afficher
+  window.selectAnswer = () => {};
+  showQuestion = () => {};
+  nextBtn.style.display = 'inline-block';
+  return;
+}
+
 function showQuestion() {
   resultEl.textContent = '';
   nextBtn.style.display = 'none';
