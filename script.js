@@ -60,6 +60,7 @@ const userQuiz = getUserQuizFromURL();
 if (userQuiz) {
   let current = 0;
   let score = 0;
+  let userAnswers = [];
   quizEl.innerHTML = `<div style='margin-bottom:12px;color:#2d3a4b;font-weight:bold;'>Quiz de ${userQuiz.creator} : Tente de deviner ses réponses !</div>`;
   showUserQuizQuestion();
   function showUserQuizQuestion() {
@@ -72,14 +73,9 @@ if (userQuiz) {
     });
   }
   window.selectUserQuizAnswer = function(index) {
-    let correct = userQuiz.answers[current];
+    userAnswers[current] = index;
     const buttons = document.querySelectorAll('.btn');
-    buttons.forEach((btn, i) => {
-      btn.disabled = true;
-      if (i === correct) btn.style.background = '#4caf50';
-      if (i === index && i !== correct) btn.style.background = '#e57373';
-    });
-    if (index === correct) score++;
+    buttons.forEach((btn) => btn.disabled = true);
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = current < userQuiz.questions.length-1 ? 'Suivant' : 'Voir le score';
     nextBtn.onclick = function() {
@@ -87,6 +83,11 @@ if (userQuiz) {
       if(current < userQuiz.questions.length) {
         showUserQuizQuestion();
       } else {
+        // Calcul du score : compare userAnswers à userQuiz.answers
+        let score = 0;
+        for(let i=0; i<userQuiz.answers.length; i++) {
+          if(userAnswers[i] === userQuiz.answers[i]) score++;
+        }
         quizEl.innerHTML = '';
         nextBtn.style.display = 'none';
         resultEl.innerHTML = `Tu as obtenu ${score} / ${userQuiz.questions.length} bonnes réponses sur le quiz de ${userQuiz.creator} !<br><br><a href='monquiz.html' class='btn' style='margin-top:18px;'>Crée ton propre quiz</a>`;
