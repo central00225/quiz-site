@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réponds à tes 10 questions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Réponds à tes 10 questions</h1>
+    <form id="user-quiz-form">
+      <label><b>Ton nom :</b></label>
+      <input type="text" name="creator" required placeholder="Ton prénom ou pseudo" style="width:100%;margin-bottom:16px;">
+      <div id="questions-container"></div>
+      <button type="submit">Générer le lien à partager</button>
+    </form>
+    <div id="quiz-link" style="margin-top:20px;"></div>
+  </div>
+  <script>
+    // Questions prédéfinies (certaines avec images)
+    const questions = [
+      { q: "Quelle est ta couleur préférée ?", type: "text" },
+      { q: "Quel est ton plat préféré ?", type: "text", img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
+      { q: "Quel animal aimes-tu le plus ?", type: "text" },
+      { q: "Quelle est ta saison préférée ?", type: "select", options: ["Printemps", "Été", "Automne", "Hiver"] },
+      { q: "Quel fruit préfères-tu ?", type: "text", img: "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80" },
+      { q: "Quel est ton sport favori ?", type: "text" },
+      { q: "Quel pays rêves-tu de visiter ?", type: "text" },
+      { q: "Quel est ton film préféré ?", type: "text" },
+      { q: "Quel super-pouvoir aimerais-tu avoir ?", type: "text" },
+      { q: "Quel dessert préfères-tu ?", type: "text", img: "https://images.unsplash.com/photo-1505250469679-203ad9ced0cb?auto=format&fit=crop&w=400&q=80" }
+    ];
+    const container = document.getElementById('questions-container');
+    questions.forEach((q, i) => {
+      let html = `<div class='question-block'><label>${i+1}. ${q.q}</label><br>`;
+      if(q.img) html += `<img src='${q.img}' alt='' style='max-width:100%;border-radius:8px;margin:8px 0;'>`;
+      if(q.type === 'select') {
+        html += `<select name='a${i}' required style='width:100%;margin-bottom:16px;'>`;
+        q.options.forEach(opt => html += `<option value='${opt}'>${opt}</option>`);
+        html += `</select>`;
+      } else {
+        html += `<input type='text' name='a${i}' required style='width:100%;margin-bottom:16px;'>`;
+      }
+      html += `</div>`;
+      container.innerHTML += html;
+    });
+    document.getElementById('user-quiz-form').onsubmit = function(e) {
+      e.preventDefault();
+      const data = new FormData(this);
+      const creator = data.get('creator');
+      const answers = [];
+      for(let i=0; i<questions.length; i++) answers.push(data.get('a'+i));
+      const payload = {creator, questions, answers};
+      const encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
+      const url = `${window.location.origin}${window.location.pathname.replace('start.html','index.html')}?userquiz=${encoded}`;
+      document.getElementById('quiz-link').innerHTML = `<b>Partage ce lien à tes amis :</b><br><input style='width:100%' value='${url}' readonly onclick='this.select()'>`;
+    }
+  </script>
+</body>
+</html>
