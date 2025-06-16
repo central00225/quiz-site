@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créer un Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Créer ton Quiz</h1>
+    <form id="quiz-form">
+      <label><b>Ton nom (créateur du quiz) :</b></label>
+      <input type="text" name="creator" required placeholder="Ton prénom ou pseudo" style="width:100%;margin-bottom:16px;">
+      <div id="questions-container"></div>
+      <button type="submit" id="generate-link">Générer le lien du quiz</button>
+    </form>
+    <div id="quiz-link" style="margin-top:20px;"></div>
+  </div>
+  <script>
+    const questionsContainer = document.getElementById('questions-container');
+    for(let i=0; i<10; i++) {
+      questionsContainer.innerHTML += `
+        <div class="question-block">
+          <label>Question ${i+1} :</label>
+          <input type="text" name="q${i}" required placeholder="Votre question..." style="width:100%;margin-bottom:8px;">
+          <label>Réponse correcte :</label>
+          <input type="text" name="a${i}_0" required placeholder="Bonne réponse" style="width:100%;margin-bottom:8px;">
+          <label>Autres réponses :</label>
+          <input type="text" name="a${i}_1" required placeholder="Mauvaise réponse 1" style="width:100%;margin-bottom:8px;">
+          <input type="text" name="a${i}_2" required placeholder="Mauvaise réponse 2" style="width:100%;margin-bottom:8px;">
+          <input type="text" name="a${i}_3" required placeholder="Mauvaise réponse 3" style="width:100%;margin-bottom:16px;">
+        </div>
+      `;
+    }
+    document.getElementById('quiz-form').onsubmit = function(e) {
+      e.preventDefault();
+      const data = new FormData(this);
+      let quiz = [];
+      for(let i=0; i<10; i++) {
+        let q = data.get(`q${i}`);
+        let answers = [0,1,2,3].map(j => data.get(`a${i}_`+j));
+        quiz.push({question:q,answers:answers,correct:0});
+      }
+      const creator = data.get('creator') || '';
+      const payload = {creator, quiz};
+      const encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
+      const url = `${window.location.origin}${window.location.pathname.replace('create.html','index.html')}?quiz=${encoded}`;
+      document.getElementById('quiz-link').innerHTML = `<b>Partage ce lien :</b><br><input style='width:100%' value='${url}' readonly onclick='this.select()'>`;
+    }
+  </script>
+</body>
+</html>
