@@ -20,16 +20,16 @@
   <script>
     // Questions prédéfinies (certaines avec images)
     const questions = [
-      { q: "Quelle est ta couleur préférée ?", type: "text" },
-      { q: "Quel est ton plat préféré ?", type: "text", img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
-      { q: "Quel animal aimes-tu le plus ?", type: "text" },
-      { q: "Quelle est ta saison préférée ?", type: "select", options: ["Printemps", "Été", "Automne", "Hiver"] },
-      { q: "Quel fruit préfères-tu ?", type: "text", img: "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80" },
-      { q: "Quel est ton sport favori ?", type: "text" },
-      { q: "Quel pays rêves-tu de visiter ?", type: "text" },
-      { q: "Quel est ton film préféré ?", type: "text" },
-      { q: "Quel super-pouvoir aimerais-tu avoir ?", type: "text" },
-      { q: "Quel dessert préfères-tu ?", type: "text", img: "https://images.unsplash.com/photo-1505250469679-203ad9ced0cb?auto=format&fit=crop&w=400&q=80" }
+      { q: "Tu préfères les frites ou l'alloco ?", type: "select", options: ["Frites", "Alloco"], img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le poulet ou le poisson ?", type: "select", options: ["Poulet", "Poisson"], img: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le jus de bissap ou le jus de gingembre ?", type: "select", options: ["Bissap", "Gingembre"], img: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le riz ou l’attiéké ?", type: "select", options: ["Riz", "Attiéké"], img: "https://images.unsplash.com/photo-1506089676908-3592f7389d4d?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le chocolat ou la vanille ?", type: "select", options: ["Chocolat", "Vanille"], img: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le thé ou le café ?", type: "select", options: ["Thé", "Café"], img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères la pizza ou le hamburger ?", type: "select", options: ["Pizza", "Hamburger"], img: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères les mangues ou les bananes ?", type: "select", options: ["Mangues", "Bananes"], img: "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le matin ou le soir ?", type: "select", options: ["Matin", "Soir"] },
+      { q: "Tu préfères le football ou le basketball ?", type: "select", options: ["Football", "Basketball"] }
     ];
     const container = document.getElementById('questions-container');
     questions.forEach((q, i) => {
