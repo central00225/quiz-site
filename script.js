@@ -58,33 +58,38 @@ const resultEl = document.getElementById('result');
 
 const userQuiz = getUserQuizFromURL();
 if (userQuiz) {
-  // Mode "devine les réponses de ton ami"
   let current = 0;
   let score = 0;
-  quizEl.innerHTML = `<div style='margin-bottom:12px;color:#2d3a4b;font-weight:bold;'>Devine les réponses de : ${userQuiz.creator}</div>`;
+  quizEl.innerHTML = `<div style='margin-bottom:12px;color:#2d3a4b;font-weight:bold;'>Quiz de ${userQuiz.creator} : Tente de deviner ses réponses !</div>`;
   showUserQuizQuestion();
   function showUserQuizQuestion() {
     resultEl.textContent = '';
     nextBtn.style.display = 'none';
     let q = userQuiz.questions[current];
-    quizEl.innerHTML = `<div style='margin-bottom:12px;color:#2d3a4b;font-weight:bold;'>Devine les réponses de : ${userQuiz.creator}</div>`;
-    if(q.img) quizEl.innerHTML += `<img src='${q.img}' alt='' style='max-width:100%;border-radius:8px;margin:8px 0;'>`;
-    quizEl.innerHTML += `<div class='question'>${q.q}</div>`;
-    quizEl.innerHTML += `<input type='text' id='guess' placeholder='Ta réponse...' style='width:100%;margin-bottom:12px;'>`;
-    quizEl.innerHTML += `<div id='feedback'></div>`;
+    quizEl.innerHTML = `<div class='card'><b>Question ${current+1} :</b><br>${q.q}</div>`;
+    q.options.forEach((opt, i) => {
+      quizEl.innerHTML += `<button class='btn' style='margin-bottom:8px;' onclick='window.selectUserQuizAnswer(${i})'>${opt}</button>`;
+    });
+  }
+  window.selectUserQuizAnswer = function(index) {
+    let correct = userQuiz.answers[current];
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === correct) btn.style.background = '#4caf50';
+      if (i === index && i !== correct) btn.style.background = '#e57373';
+    });
+    if (index === correct) score++;
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = current < userQuiz.questions.length-1 ? 'Suivant' : 'Voir le score';
     nextBtn.onclick = function() {
-      const guess = document.getElementById('guess').value.trim().toLowerCase();
-      const correct = userQuiz.answers[current].trim().toLowerCase();
-      if(guess === correct) score++;
       current++;
       if(current < userQuiz.questions.length) {
         showUserQuizQuestion();
       } else {
         quizEl.innerHTML = '';
         nextBtn.style.display = 'none';
-        resultEl.innerHTML = `Tu as trouvé ${score} / ${userQuiz.questions.length} réponses de ${userQuiz.creator} !`;
+        resultEl.innerHTML = `Tu as obtenu ${score} / ${userQuiz.questions.length} bonnes réponses sur le quiz de ${userQuiz.creator} !<br><br><a href='monquiz.html' class='btn' style='margin-top:18px;'>Crée ton propre quiz</a>`;
       }
     }
   }
