@@ -99,7 +99,7 @@ const quizFromFriend = getQuizFromURL();
 if (quizFromFriend) {
   let current = 0;
   let score = 0;
-  quizEl.innerHTML = `<div style='margin-bottom:12px;color:#2d3a4b;font-weight:bold;'>Trouve les bonnes réponses de ${creator ? creator : 'ton ami'} !</div>`;
+  quizEl.innerHTML = `<div style='margin-bottom:12px;color:#2d3a4b;font-weight:bold;'>Quiz de ${creator ? creator : 'ton ami'} : Trouve ses réponses !</div>`;
   showFriendQuizQuestion();
   function showFriendQuizQuestion() {
     resultEl.textContent = '';
