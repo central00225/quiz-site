@@ -39,6 +39,10 @@
       html += `</div>`;
       questionsContainer.innerHTML += html;
     });
+    // Fonction pour encoder en base64 compatible Unicode
+    function btoaUnicode(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
     document.getElementById('quiz-form').onsubmit = function(e) {
       e.preventDefault();
       const data = new FormData(this);
@@ -57,7 +61,7 @@
       const payload = {creator, quiz};
       let encoded = '';
       try {
-        encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
+        encoded = encodeURIComponent(btoaUnicode(JSON.stringify(payload)));
       } catch (err) {
         alert('Erreur lors de la génération du lien.');
         return;
