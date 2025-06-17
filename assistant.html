@@ -10,7 +10,6 @@
   <div class="container">
     <h1>Assistant Quiz IA</h1>
     <p>Demande à l'IA de générer des questions personnalisées pour ton quiz.<br><small>Exemple : "Fais-moi un quiz sur le football"</small></p>
-    <input type="text" id="openai-key" placeholder="Ta clé API OpenAI" style="width:100%;margin-bottom:10px;">
     <textarea id="prompt" rows="2" placeholder="Sujet ou consigne pour l'IA..." style="width:100%;margin-bottom:10px;"></textarea>
     <button id="ask-btn">Générer des questions</button>
     <div id="loading" style="display:none;margin:10px 0;">⏳ Génération en cours...</div>
@@ -18,30 +17,15 @@
   </div>
   <script>
     document.getElementById('ask-btn').onclick = async function() {
-      const key = document.getElementById('openai-key').value.trim();
       const prompt = document.getElementById('prompt').value.trim();
-      if (!key) return alert('Merci de renseigner ta clé API OpenAI.');
       if (!prompt) return alert('Merci de donner un sujet ou une consigne.');
       document.getElementById('loading').style.display = 'block';
       document.getElementById('result-questions').innerHTML = '';
-      const system = "Tu es un assistant qui génère des quiz. Donne-moi 5 questions à choix multiples sur ce sujet, avec 4 réponses par question et indique la bonne réponse. Format JSON: [{question, options, correct}]";
-      const user = prompt;
       try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const response = await fetch('http://localhost:3001/api/chatgpt', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + key
-          },
-          body: JSON.stringify({
-            model: 'gpt-3.5-turbo',
-            messages: [
-              {role: 'system', content: system},
-              {role: 'user', content: user}
-            ],
-            max_tokens: 800,
-            temperature: 0.7
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
         });
         const data = await response.json();
         let text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
@@ -63,7 +47,7 @@
         });
         document.getElementById('result-questions').innerHTML = html + '<br><small>Copie ces questions pour créer ton quiz !</small>';
       } catch (e) {
-        document.getElementById('result-questions').innerHTML = '<b>Erreur lors de la génération ou de la connexion à OpenAI.</b>';
+        document.getElementById('result-questions').innerHTML = '<b>Erreur lors de la génération ou de la connexion au backend.</b>';
       }
       document.getElementById('loading').style.display = 'none';
     }
