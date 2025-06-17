@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réponds à tes 10 questions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Réponds à tes 10 questions</h1>
+    <form id="user-quiz-form">
+      <label><b>Ton nom :</b></label>
+      <input type="text" name="creator" required placeholder="Ton prénom ou pseudo" style="width:100%;margin-bottom:16px;">
+      <div id="questions-container"></div>
+      <button type="submit">Générer le lien à partager</button>
+    </form>
+    <div id="quiz-link" style="margin-top:20px;"></div>
+  </div>
+  <script>
+    // Questions prédéfinies (certaines avec images)
+    const questions = [
+      { q: "Tu préfères les frites ou l'alloco ?", type: "select", options: ["Frites", "Alloco"], img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le poulet ou le poisson ?", type: "select", options: ["Poulet", "Poisson"], img: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le jus de bissap ou le jus de gingembre ?", type: "select", options: ["Bissap", "Gingembre"], img: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le riz ou l’attiéké ?", type: "select", options: ["Riz", "Attiéké"], img: "https://images.unsplash.com/photo-1506089676908-3592f7389d4d?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le chocolat ou la vanille ?", type: "select", options: ["Chocolat", "Vanille"], img: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le thé ou le café ?", type: "select", options: ["Thé", "Café"], img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères la pizza ou le hamburger ?", type: "select", options: ["Pizza", "Hamburger"], img: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères les mangues ou les bananes ?", type: "select", options: ["Mangues", "Bananes"], img: "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80" },
+      { q: "Tu préfères le matin ou le soir ?", type: "select", options: ["Matin", "Soir"] },
+      { q: "Tu préfères le football ou le basketball ?", type: "select", options: ["Football", "Basketball"] }
+    ];
+    const container = document.getElementById('questions-container');
+    questions.forEach((q, i) => {
+      let html = `<div class='question-block'><label>${i+1}. ${q.q}</label><br>`;
+      if(q.img) html += `<img src='${q.img}' alt='' style='max-width:100%;border-radius:8px;margin:8px 0;'>`;
+      if(q.type === 'select') {
+        html += `<select name='a${i}' required style='width:100%;margin-bottom:16px;'>`;
+        q.options.forEach(opt => html += `<option value='${opt}'>${opt}</option>`);
+        html += `</select>`;
+      } else {
+        html += `<input type='text' name='a${i}' required style='width:100%;margin-bottom:16px;'>`;
+      }
+      html += `</div>`;
+      container.innerHTML += html;
+    });
+    document.getElementById('user-quiz-form').onsubmit = function(e) {
+      e.preventDefault();
+      const data = new FormData(this);
+      const creator = data.get('creator');
+      const answers = [];
+      for(let i=0; i<questions.length; i++) answers.push(data.get('a'+i));
+      const payload = {creator, questions, answers};
+      const encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
+      const url = `${window.location.origin}${window.location.pathname.replace('start.html','index.html')}?userquiz=${encoded}`;
+      document.getElementById('quiz-link').innerHTML = `<b>Partage ce lien à tes amis :</b><br><input style='width:100%' value='${url}' readonly onclick='this.select()'>`;
+    }
+  </script>
+</body>
+</html>

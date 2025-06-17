@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créer un Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Créer ton Quiz</h1>
+    <form id="quiz-form">
+      <label><b>Ton nom (créateur du quiz) :</b></label>
+      <input type="text" name="creator" required placeholder="Ton prénom ou pseudo" style="width:100%;margin-bottom:16px;">
+      <div id="questions-container"></div>
+      <button type="submit" id="generate-link">Générer le lien du quiz</button>
+    </form>
+    <div id="quiz-link" style="margin-top:20px;"></div>
+  </div>
+  <script>
+    const questions = [
+      { q: "Que préfères-tu faire un samedi soir ?", options: ["Sortir avec des amis", "Regarder Netflix", "Dormir tôt", "Jouer à des jeux vidéo"] },
+      { q: "Quel animal te ressemble le plus ?", options: ["Chat", "Chien", "Lion", "Panda"] },
+      { q: "Si tu gagnes à la loterie, tu...", options: ["Voyages partout", "Achètes une maison", "Aides tes proches", "Investis tout"] },
+      { q: "Ton plat préféré ?", options: ["Pizza", "Alloco", "Frites", "Poulet braisé"] },
+      { q: "Ta boisson idéale ?", options: ["Eau", "Jus de bissap", "Soda", "Café"] },
+      { q: "Tu ne peux pas vivre sans...", options: ["Ton téléphone", "La musique", "Le sport", "Le chocolat"] },
+      { q: "Ton super-pouvoir rêvé ?", options: ["Voler", "Invisibilité", "Téléportation", "Lire dans les pensées"] },
+      { q: "Ta saison préférée ?", options: ["Été", "Hiver", "Printemps", "Automne"] },
+      { q: "Si tu étais un fruit ?", options: ["Mangue", "Banane", "Pastèque", "Orange"] },
+      { q: "Ton style d’amitié ?", options: ["Toujours là pour les autres", "Le/la rigolo du groupe", "Le/la confident(e)", "Le/la discret(e)"] }
+    ];
+    const questionsContainer = document.getElementById('questions-container');
+    questions.forEach((q, i) => {
+      let html = `<div class='question-block'><label>${i+1}. ${q.q}</label><br>`;
+      q.options.forEach((opt, j) => {
+        html += `<label style='display:block;margin-bottom:4px;'><input type='radio' name='q${i}' value='${j}' required> ${opt}</label>`;
+      });
+      html += `</div>`;
+      questionsContainer.innerHTML += html;
+    });
+    // Fonction pour encoder en base64 compatible Unicode
+    function btoaUnicode(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+    document.getElementById('quiz-form').onsubmit = function(e) {
+      e.preventDefault();
+      const data = new FormData(this);
+      let quiz = [];
+      for(let i=0; i<questions.length; i++) {
+        let q = questions[i].q;
+        let answers = questions[i].options;
+        let correct = data.get(`q${i}`);
+        if (correct === null) {
+          alert('Merci de répondre à toutes les questions !');
+          return;
+        }
+        quiz.push({question:q,answers:answers,correct:parseInt(correct)});
+      }
+      const creator = data.get('creator') || '';
+      const payload = {creator, quiz};
+      let encoded = '';
+      try {
+        encoded = encodeURIComponent(btoaUnicode(JSON.stringify(payload)));
+      } catch (err) {
+        alert('Erreur lors de la génération du lien.');
+        return;
+      }
+      let base = window.location.origin;
+      if (base === 'null' || base === 'file://') base = '';
+      const url = `${base}${window.location.pathname.replace('create.html','index.html')}?quiz=${encoded}`;
+      document.getElementById('quiz-link').innerHTML = `<b>Partage ce lien :</b><br><input id='share-link' style='width:100%' value='${url}' readonly onclick='this.select()'>`;
+      setTimeout(()=>{
+        const input = document.getElementById('share-link');
+        if(input) input.onclick = function(){ this.select(); document.execCommand('copy'); };
+      }, 100);
+    }
+  </script>
+</body>
+</html>
