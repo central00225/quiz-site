@@ -15,7 +15,7 @@ app.post('/api/chatgpt', async (req, res) => {
   const { prompt } = req.body;
   if (!prompt) return res.status(400).json({ error: 'Prompt manquant' });
   try {
-    const system = "Tu es un assistant qui génère des quiz. Donne-moi 5 questions à choix multiples sur ce sujet, avec 4 réponses par question et indique la bonne réponse. Format JSON: [{question, options, correct}]";
+    const system = "Génère 5 questions à choix multiples sur ce sujet, avec 4 réponses par question et indique la bonne réponse. Format JSON: [{question, options, correct}]";
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
